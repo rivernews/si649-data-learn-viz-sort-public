@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://rivernews.github.io/si649-data-learn-viz-sort",
   "dependencies": {
+    "node-sass": "^4.9.4",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-scripts": "2.0.5"
@@ -27,6 +28,10 @@
   ],
   "devDependencies": {
     "d3": "^5.7.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
     "gh-pages": "^2.0.1"
   }
 }

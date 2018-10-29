@@ -1,10 +1,45 @@
+## Roadmap
 
+## Learning React
+
+- Only changes in `this.state` will trigger update.
+  - But don't use `this.state.<blah> = ...`, [use `setState()` instead](https://reactjs.org/docs/faq-state.html#what-does-setstate-do).
+  - Where to initialize state? [Recommended in constructor](https://facebook.github.io/react-native/docs/state).
+- `sass/scss` support and modular css! [See this post](https://blog.bitsrc.io/how-to-use-sass-and-css-modules-with-create-react-app-83fa8b805e5e)
+  - `npm i node-ass`, then change your filenames to `scss`!
+  - Rename your `scss` to `<anything>.module.scss`.
+    - Now the styling will be scoped!
+    - You can do things like this to access `.btn` in `scss`:
+
+```jsx
+import styles from './Button.module.scss';
+...
+<button
+className={styles.btn}
+>...
+```
+
+- Using arrow function as callback for onClick events in component class
+  - 
+ 
 ## Referece
 
 - This repo url is [here](https://github.com/rivernews/si649-data-learn-viz-sort)
 - The page is published [here](https://rivernews.github.io/si649-data-learn-viz-sort/), following [this medium website!](https://codeburst.io/deploy-react-to-github-pages-to-create-an-amazing-website-42d8b09cd4d).
 - Install d3 using `npm i -D d3`
-- Setup [linting](https://code.visualstudio.com/docs/nodejs/reactjs-tutorial)
+- You will need eslint for code autocomplete hints. ~~Setup [linting](https://code.visualstudio.com/docs/nodejs/reactjs-tutorial)~~
+  - ~~Not working properly (e.g. variable using but shown not used)? Add this line in `.eslintrc.js` (See [this SO post](https://github.com/babel/babel-eslint/issues/6)):~~
+  - Just use `eslint init` and choose `airbnb`. (Install eslint globally first, follow links above.)
+  - Seems like adding this line in `.eslintrc.js` is very important in many situations: `"parser": "babel-eslint"`. [See this post](https://github.com/eslint/eslint/issues/10137).
+
+```json
+...
+"extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+],
+...
+```
 
 ---
 

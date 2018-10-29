@@ -1,10 +1,29 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+import * as RandomHelper from "./helpers/random";
+
+import './App.scss';
 
 import AnimatedSortBars from "./components/animated-sort-bars/animated-sort-bars";
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: RandomHelper.generateRandomIntegers(30),
+            svgSize: {
+                width: 500,
+                height: 350,
+            }
+        };
+    }
+
+    shuffle = () => {
+        this.setState((prevState) => ({
+            data: RandomHelper.generateRandomIntegers(30)
+        }))
+    }
+
     render() {
         return (
             <div className="App">
@@ -13,10 +32,13 @@ class App extends Component {
                 </header>
                 <div>
                     <AnimatedSortBars
-                        data={ [5, 10, 1, 3] }
-                        size={ [500, 500] }
+                        data={ this.state.data }
+                        svgSize = { this.state.svgSize }
                     >
                     </AnimatedSortBars>
+                </div>
+                <div>
+                    <button onClick={this.shuffle}>Hello</button>
                 </div>
             </div>
         );

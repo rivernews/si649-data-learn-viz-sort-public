@@ -5,8 +5,11 @@ import '../../App.scss'
 import './animated-sort-bars.module.css'
 
 import * as d3 from 'd3';
+import "d3-selection-multi";
 
 export default class AnimatedSortBars extends Component {
+    dataMax;
+
     constructor(props) {
         super(props)
         this.createBarChart = this.createBarChart.bind(this)
@@ -21,29 +24,52 @@ export default class AnimatedSortBars extends Component {
     }
     createBarChart() {
         const node = this.node
-        const dataMax = d3.max(this.props.data)
-        const yScale = d3.scaleLinear()
-            .domain([0, dataMax])
-            .range([0, this.props.svgSize.height])
+        this.dataMax = d3.max(this.props.data)
+        const { x: xScale, y: yScale } = this.setupInitialScale();
+
+        // inject data
+        let bars = d3.select(node)
+            .selectAll('rect')
+            .data(this.props.data)
             ;
 
-        d3.select(node)
-            .selectAll('rect')
-            .data(this.props.data)
+        let t = d3.transition().duration(800); // cannot reuse across updates, have to regenerate t for tansition(); otherwise duration, ... won't work
+
+        // new
+        bars
             .enter()
             .append('rect')
+            .styles({
+                opacity: 0,
+                fill: "blue"
+            })
+            .transition(t)
+            .styles({
+                opacity: 1,
+                fill: "orange"
+            })
 
-        d3.select(node)
-            .selectAll('rect')
-            .data(this.props.data)
+        // removed
+        bars
             .exit()
+            .attrs({
+                class: "exit"
+            })
+            .transition(t)
+            .attrs({
+                height: 0
+            })
+            .styles({
+                opacity: 0
+            })
             .remove()
 
-        d3.select(node)
-            .selectAll('rect')
-            .data(this.props.data)
-            .style('fill', '#fe9922')
-            .attr('x', (d, i) => i * 25)
+        // update existing
+        bars
+            .transition(t)
+            // .style('fill', 'orange')
+            .attr('x', (d, i) => xScale(d))
+            // .attr('x', (d, i) => i * 25)
             .attr('y', (d) => {
                 return this.props.svgSize.height - yScale(d);
             })
@@ -51,12 +77,21 @@ export default class AnimatedSortBars extends Component {
             .attr('width', 25)
     }
 
-    setupInitialScale() {
-
+    setupInitialScale = () => {
         let x = d3.scaleBand()
-            .domain([])
-            .range([0, this.config.svgAvailSpaceSize.width])
+            .domain(this.props.data)
+            .range([0, this.props.svgSize.width])
             .padding(0.1);
+
+        let y = d3.scaleLinear()
+            .domain([0, this.dataMax])
+            .range([0, this.props.svgSize.height])
+            ;
+
+        return {
+            x,
+            y
+        }
     }
 
     render() {

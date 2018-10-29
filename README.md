@@ -20,7 +20,6 @@ className={styles.btn}
 ```
 
 - Using arrow function as callback for onClick events in component class
-  - 
  
 ## Referece
 

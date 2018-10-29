@@ -1,3 +1,13 @@
+
+## Referece
+
+- This repo url is [here](https://github.com/rivernews/si649-data-learn-viz-sort)
+- The page is published [here](https://rivernews.github.io/si649-data-learn-viz-sort/), following [this medium website!](https://codeburst.io/deploy-react-to-github-pages-to-create-an-amazing-website-42d8b09cd4d).
+- Install d3 using `npm i -D d3`
+- Setup [linting](https://code.visualstudio.com/docs/nodejs/reactjs-tutorial)
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>

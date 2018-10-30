@@ -10,17 +10,25 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: RandomHelper.generateRandomIntegers(30),
+            data: RandomHelper.generateRandomIntegers(400, 40),
             svgSize: {
-                width: 500,
+                width: 900,
                 height: 350,
             }
         };
     }
 
+    random = () => {
+        this.setState((prevState) => ({
+            data: RandomHelper.generateRandomIntegers(400, 40)
+        }))
+    }
+
     shuffle = () => {
         this.setState((prevState) => ({
-            data: RandomHelper.generateRandomIntegers(30)
+            data: prevState.data.sort((a, b) => {
+                return (a.value - b.value > 0) ? 1: -1 ;
+            })
         }))
     }
 
@@ -38,7 +46,8 @@ class App extends Component {
                     </AnimatedSortBars>
                 </div>
                 <div>
-                    <button onClick={this.shuffle}>Hello</button>
+                    <button onClick={this.random}>Random</button>
+                    <button onClick={this.shuffle}>Sort</button>
                 </div>
             </div>
         );

@@ -4,11 +4,15 @@ export function rangeInt(start, end) {
     ) + start;
 }
 
-export function generateRandomIntegers (size = 10) {
+export function generateRandomIntegers (size = 10, range = 10) {
     let data = [];
     for (let i = 0; i < size; i++) {
-        data.push( rangeInt(0, 10) )
+        data.push( {
+            id: `haha-${i}`,
+            value: rangeInt(0, range),
+        } )
     }
 
+    console.log("generated", data);
     return data;
 }

@@ -34,7 +34,7 @@ export default class AnimatedSortBars extends Component {
             })
             ;
 
-        let t = d3.transition().duration(800); // cannot reuse across updates, have to regenerate t for tansition(); otherwise duration, ... won't work
+        let t = d3.transition().duration(this.props.swapTransition); // cannot reuse across updates, have to regenerate t for tansition(); otherwise duration, ... won't work
 
         // new
         bars.enter().append('rect')
@@ -77,8 +77,13 @@ export default class AnimatedSortBars extends Component {
 
         // update existing
         bars
+            .styles({
+                // fill: "blue"
+            })
             .transition(t)
-            // .style('fill', 'orange')
+            .styles({
+                fill: "orange"
+            })
             .attr('x', (d, i) => xScale(d.id))
             // .attr('x', (d, i) => i * 25)
             .attr('y', (d) => {
@@ -124,4 +129,5 @@ AnimatedSortBars.propTypes = {
         height: PropTypes.number
     }),
     data: PropTypes.array,
+    swapTransition: PropTypes.number
 };

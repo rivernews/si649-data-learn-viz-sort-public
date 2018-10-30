@@ -10,26 +10,55 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: RandomHelper.generateRandomIntegers(400, 40),
+            data: this.generateData(),
             svgSize: {
                 width: 900,
                 height: 350,
-            }
+            },
+            swapTransition: 300
         };
     }
 
-    random = () => {
+    resetData = () => {
         this.setState((prevState) => ({
-            data: RandomHelper.generateRandomIntegers(400, 40)
+            data: this.generateData()
         }))
     }
 
-    shuffle = () => {
-        this.setState((prevState) => ({
-            data: prevState.data.sort((a, b) => {
-                return (a.value - b.value > 0) ? 1: -1 ;
-            })
-        }))
+    generateData() {
+        return RandomHelper.generateRandomIntegers(10, 40);
+    }
+
+    onStartSortClick = () => {
+        this.bubbleSort();
+    }
+
+    async bubbleSort() {
+        let i = 0, j = 0, n = this.state.data.length;
+
+        if (this.state.data.length === 0) return;
+
+        for (i = 0; i < n; i++) {
+            for (j = 0; j < n - 1; j++) {
+                if (this.state.data[j].value > this.state.data[j + 1].value) {
+                    await this.swap(j, j + 1);
+                }
+            }
+        }
+    }
+
+    async swap (index1, index2) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.setState((state) => {
+                    let temp = Object.assign(state.data[index1])
+                    state.data[index1] = state.data[index2]
+                    state.data[index2] = temp
+                    resolve();
+                    return state;
+                });
+            }, this.state.swapTransition * 2);
+        });
     }
 
     render() {
@@ -40,14 +69,15 @@ class App extends Component {
                 </header>
                 <div>
                     <AnimatedSortBars
-                        data={ this.state.data }
-                        svgSize = { this.state.svgSize }
+                        data={this.state.data}
+                        svgSize={this.state.svgSize}
+                        swapTransition={this.state.swapTransition}
                     >
                     </AnimatedSortBars>
                 </div>
                 <div>
-                    <button onClick={this.random}>Random</button>
-                    <button onClick={this.shuffle}>Sort</button>
+                    <button onClick={this.resetData}>Reset Dataset</button>
+                    <button onClick={this.onStartSortClick}>Start Sort</button>
                 </div>
             </div>
         );

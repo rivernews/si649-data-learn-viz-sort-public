@@ -13,6 +13,5 @@ export function generateRandomIntegers (size = 10, range = 10) {
         } )
     }
 
-    console.log("generated", data);
     return data;
 }

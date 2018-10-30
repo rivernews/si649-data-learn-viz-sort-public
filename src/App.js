@@ -7,6 +7,7 @@ import './App.scss';
 import AnimatedSortBars from "./components/animated-sort-bars/animated-sort-bars";
 
 class App extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -15,7 +16,8 @@ class App extends Component {
                 width: 900,
                 height: 350,
             },
-            swapTransition: 300
+            swapTransition: 200,
+            highlightedBarIds: []
         };
     }
 
@@ -26,7 +28,7 @@ class App extends Component {
     }
 
     generateData() {
-        return RandomHelper.generateRandomIntegers(10, 40);
+        return RandomHelper.generateRandomIntegers(20, 40);
     }
 
     onStartSortClick = () => {
@@ -45,6 +47,19 @@ class App extends Component {
                 }
             }
         }
+
+        await this.clearMarkedBars();
+    }
+
+    async clearMarkedBars() {
+        return new Promise((resolve, reject) => {
+            this.setState((state) => {
+                resolve()
+                return {
+                    highlightedBarIds: []
+                }
+            });
+        });
     }
 
     async swap (index1, index2) {
@@ -54,6 +69,11 @@ class App extends Component {
                     let temp = Object.assign(state.data[index1])
                     state.data[index1] = state.data[index2]
                     state.data[index2] = temp
+                    state.highlightedBarIds = [
+                        state.data[index1].id,
+                        state.data[index2].id
+                    ]
+                    
                     resolve();
                     return state;
                 });
@@ -72,6 +92,7 @@ class App extends Component {
                         data={this.state.data}
                         svgSize={this.state.svgSize}
                         swapTransition={this.state.swapTransition}
+                        highlightedBarIds={this.state.highlightedBarIds}
                     >
                     </AnimatedSortBars>
                 </div>

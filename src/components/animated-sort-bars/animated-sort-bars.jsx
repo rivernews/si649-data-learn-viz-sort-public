@@ -77,12 +77,12 @@ export default class AnimatedSortBars extends Component {
 
         // update existing
         bars
-            .styles({
-                // fill: "blue"
-            })
             .transition(t)
             .styles({
-                fill: "orange"
+                fill: (d, i) => {
+                    let found = this.props.highlightedBarIds.find((id) => d.id === id);
+                    return (found === undefined) ? "orange" : "blue";
+                }
             })
             .attr('x', (d, i) => xScale(d.id))
             // .attr('x', (d, i) => i * 25)
@@ -129,5 +129,6 @@ AnimatedSortBars.propTypes = {
         height: PropTypes.number
     }),
     data: PropTypes.array,
-    swapTransition: PropTypes.number
+    swapTransition: PropTypes.number,
+    highlightedBarIds: PropTypes.arrayOf(PropTypes.number)
 };

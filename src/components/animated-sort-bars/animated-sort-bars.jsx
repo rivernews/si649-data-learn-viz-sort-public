@@ -1,14 +1,17 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
-import '../../App.scss'
-import './animated-sort-bars.module.css'
+// import '../../App.scss'
+import './animated-sort-bars.module.scss'
 
 import * as d3 from 'd3';
 import "d3-selection-multi";
 
 export default class AnimatedSortBars extends Component {
     dataMax;
+    xScale;
+    yScale;
+    bars;
 
     constructor(props) {
         super(props)
@@ -18,15 +21,22 @@ export default class AnimatedSortBars extends Component {
         this.createBarChart()
     }
     componentDidUpdate() {
-        this.createBarChart()
+        // this.createBarChart()
+        this.updateBarChart()
     }
+    
     createBarChart() {
-        const node = this.node
         this.dataMax = d3.max(this.props.data.map((d)=>d.value));
-        const { x: xScale, y: yScale } = this.setupInitialScale();
+        const { x, y } = this.setupInitialScale();
+        this.xScale = x;
+        this.yScale = y;
 
-        // inject data
-        let bars = d3.select(node)
+        this.updateBarChart();
+    }
+
+    updateBarChart() {
+        // inject data for updates
+        this.bars = d3.select(this.node)
             .selectAll('rect')
             .data(this.props.data, (d, i) => {
                 // give each data an identifier so d3 can keep track of
@@ -37,7 +47,7 @@ export default class AnimatedSortBars extends Component {
         let t = d3.transition().duration(this.props.swapTransition); // cannot reuse across updates, have to regenerate t for tansition(); otherwise duration, ... won't work
 
         // new
-        bars.enter().append('rect')
+        this.bars.enter().append('rect')
             .styles({
                 opacity: 0,
                 fill: "orange"
@@ -45,10 +55,10 @@ export default class AnimatedSortBars extends Component {
             .attrs({
                 rx: 5,
                 ry: 5,
-                x: (d) => xScale(d.id),
+                x: (d, i) => this.xScale(i),
                 y: this.props.svgSize.height,
                 height: 0,
-                width: () => xScale.bandwidth()
+                width: () => this.xScale.bandwidth()
             })
             .transition(t)
             .styles({
@@ -56,13 +66,13 @@ export default class AnimatedSortBars extends Component {
             })
             .attrs({
                 y: (d, i) => {
-                    return this.props.svgSize.height - yScale(d.value);
+                    return this.props.svgSize.height - this.yScale(d.value);
                 },
-                height: d => yScale(d.value),
+                height: d => this.yScale(d.value),
             })
 
         // removed
-        bars.exit()
+        this.bars.exit()
             .attrs({
                 class: "exit"
             })
@@ -76,7 +86,7 @@ export default class AnimatedSortBars extends Component {
             .remove()
 
         // update existing
-        bars
+        this.bars
             .transition(t)
             .styles({
                 fill: (d, i) => {
@@ -84,13 +94,13 @@ export default class AnimatedSortBars extends Component {
                     return (found === undefined) ? "orange" : "blue";
                 }
             })
-            .attr('x', (d, i) => xScale(d.id))
+            .attr('x', (d, i) => this.xScale(i))
             // .attr('x', (d, i) => i * 25)
             .attr('y', (d) => {
-                return this.props.svgSize.height - yScale(d.value);
+                return this.props.svgSize.height - this.yScale(d.value);
             })
-            .attr('height', d => yScale(d.value))
-            .attr('width', xScale.bandwidth())
+            .attr('height', d => this.yScale(d.value))
+            .attr('width', this.xScale.bandwidth())
             ;
 
 
@@ -98,7 +108,7 @@ export default class AnimatedSortBars extends Component {
 
     setupInitialScale = () => {
         let x = d3.scaleBand()
-            .domain(this.props.data.map((d) => d.id))
+            .domain(this.props.data.map((d, i) => i))
             .range([0, this.props.svgSize.width])
             .padding(0.1);
 
@@ -130,5 +140,5 @@ AnimatedSortBars.propTypes = {
     }),
     data: PropTypes.array,
     swapTransition: PropTypes.number,
-    highlightedBarIds: PropTypes.arrayOf(PropTypes.number)
+    highlightedBarIds: PropTypes.arrayOf(PropTypes.string)
 };

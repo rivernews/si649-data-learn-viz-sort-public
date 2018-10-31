@@ -18,15 +18,35 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.App-content {
+    display: flex;
+
+    .sort-animation-container {
+        display: flex;
+        flex-direction: column;
+
+        .sort-animation {
+            display: flex;
+            flex-direction: column;
+
+            .header {
+
+            }
+            .visualization {
+
+            }
+
+            &:not(:last-child) {
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+    .action-container {
+        .action-button  {
+            border-radius: 20px;
+        }
+    }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+

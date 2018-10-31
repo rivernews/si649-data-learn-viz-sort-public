@@ -2,8 +2,11 @@
 
 
 - [x] Other data viz
-  - [ ] selection
+  - [x] selection
+    - [x] Each dataset should have their own data copies. (But same initial dataset)
+    - [x] Add a label for each sort chart
   - [ ] insertion
+- [ ] Setup basic UI controls
 - [ ] How to pause?
 - Redefine...
 
@@ -48,6 +51,7 @@ className={styles.btn}
 ],
 ...
 ```
+- MDC for React, google official release, [github repo page](https://github.com/material-components/material-components-web-react)
 
 ---
 

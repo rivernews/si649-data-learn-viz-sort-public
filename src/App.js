@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 
 import * as RandomHelper from "./helpers/random";
 
@@ -6,108 +6,282 @@ import './App.scss';
 
 import AnimatedSortBars from "./components/animated-sort-bars/animated-sort-bars";
 
+import Button from '@material/react-button/dist';
+import '@material/react-button/dist/button.css';
+
 class App extends Component {
+    swapTransition = 10
+    n = 10;
+    range = 40;
+    data = this.generateRandomData();
 
     constructor(props) {
         super(props);
         this.state = {
-            data: this.generateData(),
+            isSorting: false,
+            bubbleSortData: this.data.slice(0),
+            selectionSortData: this.data.slice(0),
+            insertionSortData: this.data.slice(0),
             svgSize: {
-                width: 900,
-                height: 350,
+                width: 500,
+                height: 250,
             },
-            swapTransition: 3,
-            highlightedBarIds: []
+            bubbleSortHighlightedBarIds: [],
+            selectionSortHighlightedBarIds: [],
+            insertionSortHighlightedBarIds: []
         };
     }
 
+    /**
+     * UI Handlers
+     * 
+     * 
+     */
+
     resetData = () => {
+        this.data = this.generateRandomData()
         this.setState((prevState) => ({
-            data: this.generateData()
+            bubbleSortData: this.data.slice(0),
+            selectionSortData: this.data.slice(0),
+            insertionSortData: this.data.slice(0),
         }))
     }
 
-    generateData() {
-        return RandomHelper.generateRandomIntegers(90, 40);
-    }
-
     onStartSortClick = () => {
-        this.bubbleSort();
+        this.asyncSetState({
+            callback: function (state) {
+                state.isSorting = true
+                return state;
+            }
+        })
+            .then(() =>
+                Promise.all([
+                    this.bubbleSort(this.state.bubbleSortData),
+                    this.selectionSort(this.state.selectionSortData),
+                ])
+            )
+            .then(() =>
+                this.asyncSetState({
+                    callback: function (state) {
+                        state.isSorting = false
+                        return state;
+                    }
+                })
+            )
+            ;
     }
 
-    async bubbleSort() {
-        let i = 0, j = 0, n = this.state.data.length;
+    /**
+     * Core Sort ALgorithms
+     * 
+     * 
+     */
 
-        if (this.state.data.length === 0) return;
+    async insertionSort() {
+        
+    }
 
-        for (i = 0; i < n; i++) {
-            for (j = 0; j < n - 1; j++) {
-                if (this.state.data[j].value > this.state.data[j + 1].value) {
-                    await this.swap(j, j + 1);
+    async selectionSort(dataRef = []) {
+        let n = dataRef.length;
+        if (dataRef.length === 0) return;
+
+        for (let i = 0; i < n - 1; i++) {
+            let minIndex = i;
+            for (let j = i + 1; j < n; j++) {
+                await this.markBarsByIndexes([j, minIndex], "selection")
+                await this.asyncWait(this.swapTransition * 2);
+                if (dataRef[j].value < dataRef[minIndex].value) {
+                    minIndex = j;
                 }
             }
+            await this.markBarsByIndexes([i, minIndex], "selection");
+            await this.swap(i, minIndex, "selection");
+            await this.asyncWait(this.swapTransition * 2);
         }
 
-        await this.clearMarkedBars();
+        await this.clearMarkedBars("selection");
+        return;
     }
 
-    async clearMarkedBars() {
+    async bubbleSort(dataRef = []) {
+        let n = dataRef.length;
+        if (dataRef.length === 0) return;
+
+        for (let i = 0; i < n; i++) {
+            let isSwapped = false;
+            for (let j = 0; j < n - 1 - i; j++) {
+                await this.markBarsByIndexes([j, j + 1], "bubble")
+                await this.asyncWait(this.swapTransition * 2);
+                if (dataRef[j].value > dataRef[j + 1].value) {
+                    await this.swap(j, j + 1, "bubble");
+                    isSwapped = true;
+                    await this.asyncWait(this.swapTransition * 2);
+                }
+            }
+            if (!isSwapped) {
+                // console.log("short cut!")
+                break;
+            }
+        }
+        await this.clearMarkedBars("bubble");
+        return;
+    }
+
+    /**
+     * Helper Functions
+     * 
+     * 
+     */
+
+    async markBarsByIndexes(indexes = [], sortType) {
+        let dataKeyName = this.getStateDataKeyName(sortType);
+        let highlightedBarIdsKeyName = this.getHighlightedBarIdsKeyName(sortType);
+
+        await this.asyncSetState({
+            callback: function (state) {
+                let highlightedBarIds = []
+                for (let index of indexes) {
+                    highlightedBarIds.push(state[dataKeyName][index].id);
+                }
+                if (sortType) {
+                    state[highlightedBarIdsKeyName] = highlightedBarIds;
+                }
+                return state;
+            }
+        })
+    }
+
+    getStateDataKeyName(sortType = "") {
+        return (sortType !== "") ? `${sortType.toLowerCase()}SortData` : null;
+    }
+
+    getHighlightedBarIdsKeyName(sortType = "") {
+        return (sortType !== "") ? `${sortType}SortHighlightedBarIds` : null;
+    }
+
+    async clearMarkedBars(sortType) {
         return new Promise((resolve, reject) => {
             this.setState((state) => {
                 resolve()
                 return {
-                    highlightedBarIds: []
+                    [this.getHighlightedBarIdsKeyName(sortType)]: []
                 }
             });
         });
     }
 
-    async swap (index1, index2) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                this.setState((state) => {
-                    let temp = Object.assign(state.data[index1])
-                    state.data[index1] = state.data[index2]
-                    state.data[index2] = temp
-                    state.highlightedBarIds = [
-                        state.data[index1].id,
-                        state.data[index2].id
-                    ]
-                    
+    async swap(index1, index2, sortType) {
+        let dataKeyName = this.getStateDataKeyName(sortType);
+        await this.asyncSetState({
+            callback: function (state) {
+                let temp = Object.assign(state[dataKeyName][index1])
+                state[dataKeyName][index1] = state[dataKeyName][index2]
+                state[dataKeyName][index2] = temp
+                return state;
+            }
+        });
+        return;
+    }
+
+    asyncSetState({ callback = null } = {}) {
+        return new Promise(resolve => {
+            this.setState((state) => {
+                if (callback !== null) {
+                    let callbackAssignedState = callback(state);
                     resolve();
-                    return state;
-                });
-            }, this.state.swapTransition * 2);
+                    return Object.assign(state, callbackAssignedState);
+                }
+            })
         });
     }
+
+    asyncWait(milliSecond) {
+        return new Promise(resolve => setTimeout(resolve, milliSecond));
+    }
+
+    generateRandomData() {
+        return RandomHelper.generateRandomIntegers(this.n, this.range);
+    }
+
+    /**
+     * Template
+     * 
+     * 
+     */
 
     render() {
         return (
             <div className="App">
                 <header className="App-header">
-                    <h2>D3 Board</h2>
+                    <h2>Basic Sort Algorithms Viz</h2>
                 </header>
-                <div>
-                    <AnimatedSortBars
-                        data={this.state.data}
-                        svgSize={this.state.svgSize}
-                        swapTransition={this.state.swapTransition}
-                        highlightedBarIds={this.state.highlightedBarIds}
-                    >
-                    </AnimatedSortBars>
-                </div>
-                <div>
-                    <AnimatedSortBars
-                        data={this.state.data}
-                        svgSize={this.state.svgSize}
-                        swapTransition={this.state.swapTransition}
-                        highlightedBarIds={this.state.highlightedBarIds}
-                    >
-                    </AnimatedSortBars>
-                </div>
-                <div>
-                    <button onClick={this.resetData}>Reset Dataset</button>
-                    <button onClick={this.onStartSortClick}>Start Sort</button>
+                <div className="App-content">
+                    <div className="sort-animation-container">
+                        <div className="sort-animation">
+                            <div className="header">
+                                <span>Bubble Sort</span>
+                            </div>
+                            <div className="visualization">
+                                <AnimatedSortBars
+                                    data={this.state.bubbleSortData}
+                                    svgSize={this.state.svgSize}
+                                    swapTransition={this.swapTransition}
+                                    highlightedBarIds={this.state.bubbleSortHighlightedBarIds}
+                                >
+                                </AnimatedSortBars>
+                            </div>
+                        </div>
+                        <div className="sort-animation">
+                            <div className="header">
+                                <span>Selection Sort</span>
+                            </div>
+                            <div className="visualization">
+                                <AnimatedSortBars
+                                    data={this.state.selectionSortData}
+                                    svgSize={this.state.svgSize}
+                                    swapTransition={this.swapTransition}
+                                    highlightedBarIds={this.state.selectionSortHighlightedBarIds}
+                                >
+                                </AnimatedSortBars>
+                            </div>
+                        </div>
+                        <div className="sort-animation">
+                            <div className="header">
+                                <span>Insertion Sort</span>
+                            </div>
+                            <div className="visualization">
+                                <AnimatedSortBars
+                                    data={this.state.insertionSortData}
+                                    svgSize={this.state.svgSize}
+                                    swapTransition={this.swapTransition}
+                                    highlightedBarIds={this.state.insertionSortHighlightedBarIds}>
+                                </AnimatedSortBars>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="action-container" >
+                        <Button
+                            className="action-button"
+                            raised
+                            disabled={this.state.isSorting}
+                            onClick={this.onStartSortClick}>
+                            Start
+                        </Button>
+                        <Button
+                            className="action-button"
+                            raised
+                            disabled={this.state.isSorting}
+                            onClick={this.resetData}>
+                            Reset
+                        </Button>
+                        <Button
+                            className="action-button"
+                            raised
+                            onClick={() => console.log('clicked!')}>
+                            Click Me!
+                        </Button>
+                    </div>
+
                 </div>
             </div>
         );

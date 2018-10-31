@@ -8,8 +8,8 @@ export function generateRandomIntegers (size = 10, range = 10) {
     let data = [];
     for (let i = 0; i < size; i++) {
         data.push( {
-            id: `haha-${i}`,
-            value: rangeInt(0, range),
+            id: `id-${i}`,
+            value: rangeInt(1, range),
         } )
     }
 

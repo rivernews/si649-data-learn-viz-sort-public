@@ -1,5 +1,12 @@
 ## Roadmap
 
+
+- [x] Other data viz
+  - [ ] selection
+  - [ ] insertion
+- [ ] How to pause?
+- Redefine...
+
 ## Learning React
 
 - Only changes in `this.state` will trigger update.
@@ -20,6 +27,8 @@ className={styles.btn}
 ```
 
 - Using arrow function as callback for onClick events in component class
+
+- Using `await` in for loop, [see this medium post](https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795)
  
 ## Referece
 

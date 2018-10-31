@@ -16,7 +16,7 @@ class App extends Component {
                 width: 900,
                 height: 350,
             },
-            swapTransition: 200,
+            swapTransition: 3,
             highlightedBarIds: []
         };
     }
@@ -28,7 +28,7 @@ class App extends Component {
     }
 
     generateData() {
-        return RandomHelper.generateRandomIntegers(20, 40);
+        return RandomHelper.generateRandomIntegers(90, 40);
     }
 
     onStartSortClick = () => {
@@ -87,6 +87,15 @@ class App extends Component {
                 <header className="App-header">
                     <h2>D3 Board</h2>
                 </header>
+                <div>
+                    <AnimatedSortBars
+                        data={this.state.data}
+                        svgSize={this.state.svgSize}
+                        swapTransition={this.state.swapTransition}
+                        highlightedBarIds={this.state.highlightedBarIds}
+                    >
+                    </AnimatedSortBars>
+                </div>
                 <div>
                     <AnimatedSortBars
                         data={this.state.data}

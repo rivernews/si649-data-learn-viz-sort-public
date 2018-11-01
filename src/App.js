@@ -11,8 +11,8 @@ import '@material/react-button/dist/button.css';
 
 class App extends Component {
     swapTransition = 10
-    n = 10;
-    range = 40;
+    n = 104;
+    range = 240;
     data = this.generateRandomData();
 
     constructor(props) {
@@ -58,6 +58,7 @@ class App extends Component {
                 Promise.all([
                     this.bubbleSort(this.state.bubbleSortData),
                     this.selectionSort(this.state.selectionSortData),
+                    this.insertionSort(this.state.insertionSortData),
                 ])
             )
             .then(() =>
@@ -77,8 +78,33 @@ class App extends Component {
      * 
      */
 
-    async insertionSort() {
-        
+    async insertionSort(dataRef = []) {
+        let n = dataRef.length;
+        let stateKeyName = this.getStateDataKeyName("insertion")
+
+        for (let i = 1; i < n; i++) {
+            let sortingTargetIndex = i;
+            let insertIndex = i - 1;
+            while (insertIndex >= 0 && dataRef[insertIndex].value > dataRef[sortingTargetIndex].value) {
+                await this.markBarsByIndexes([i, insertIndex], "insertion")
+                await this.asyncWait(this.swapTransition * 2);
+                insertIndex--;
+            }
+            insertIndex++;
+
+            await this.asyncSetState({
+                callback: function (state) {
+                    let sortingTarget = state[stateKeyName][sortingTargetIndex];
+                    state[stateKeyName].splice(sortingTargetIndex, 1);
+                    state[stateKeyName].splice(insertIndex, 0, sortingTarget);
+                    return state
+                }
+            })
+            await this.asyncWait(this.swapTransition * 2);
+        }
+
+        await this.clearMarkedBars("insertion");
+        return;
     }
 
     async selectionSort(dataRef = []) {
@@ -133,7 +159,7 @@ class App extends Component {
      * 
      */
 
-    async markBarsByIndexes(indexes = [], sortType) {
+    async markBarsByIndexes(indexes, sortType) {
         let dataKeyName = this.getStateDataKeyName(sortType);
         let highlightedBarIdsKeyName = this.getHighlightedBarIdsKeyName(sortType);
 
@@ -218,9 +244,6 @@ class App extends Component {
                 <div className="App-content">
                     <div className="sort-animation-container">
                         <div className="sort-animation">
-                            <div className="header">
-                                <span>Bubble Sort</span>
-                            </div>
                             <div className="visualization">
                                 <AnimatedSortBars
                                     data={this.state.bubbleSortData}
@@ -230,11 +253,11 @@ class App extends Component {
                                 >
                                 </AnimatedSortBars>
                             </div>
+                            <div className="header">
+                                <span>Bubble Sort</span>
+                            </div>
                         </div>
                         <div className="sort-animation">
-                            <div className="header">
-                                <span>Selection Sort</span>
-                            </div>
                             <div className="visualization">
                                 <AnimatedSortBars
                                     data={this.state.selectionSortData}
@@ -244,11 +267,11 @@ class App extends Component {
                                 >
                                 </AnimatedSortBars>
                             </div>
+                            <div className="header">
+                                <span>Selection Sort</span>
+                            </div>
                         </div>
                         <div className="sort-animation">
-                            <div className="header">
-                                <span>Insertion Sort</span>
-                            </div>
                             <div className="visualization">
                                 <AnimatedSortBars
                                     data={this.state.insertionSortData}
@@ -256,6 +279,9 @@ class App extends Component {
                                     swapTransition={this.swapTransition}
                                     highlightedBarIds={this.state.insertionSortHighlightedBarIds}>
                                 </AnimatedSortBars>
+                            </div>
+                            <div className="header">
+                                <span>Insertion Sort</span>
                             </div>
                         </div>
                     </div>

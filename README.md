@@ -5,10 +5,15 @@
   - [x] selection
     - [x] Each dataset should have their own data copies. (But same initial dataset)
     - [x] Add a label for each sort chart
-  - [ ] insertion
+  - [x] insertion
 - [ ] Setup basic UI controls
 - [ ] How to pause?
 - Redefine...
+
+---
+
+- Some new ideas
+  - use # of swap / comparison instead of runtime t.
 
 ## Learning React
 

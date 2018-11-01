@@ -22,9 +22,10 @@
     display: flex;
 
     .sort-animation-container {
+        margin-top: 20px;
+
         display: flex;
         flex-direction: column;
-
         .sort-animation {
             display: flex;
             flex-direction: column;
@@ -40,6 +41,8 @@
                 margin-bottom: 10px;
             }
         }
+
+        margin-bottom: 20px;
     }
 
     .action-container {

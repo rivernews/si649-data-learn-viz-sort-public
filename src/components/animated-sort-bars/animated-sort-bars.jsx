@@ -53,8 +53,8 @@ export default class AnimatedSortBars extends Component {
                 fill: "orange"
             })
             .attrs({
-                rx: 5,
-                ry: 5,
+                rx: this.xScale.bandwidth() * .5,
+                ry: this.xScale.bandwidth() * .5,
                 x: (d, i) => this.xScale(i),
                 y: this.props.svgSize.height,
                 height: 0,
@@ -140,5 +140,6 @@ AnimatedSortBars.propTypes = {
     }),
     data: PropTypes.array,
     swapTransition: PropTypes.number,
-    highlightedBarIds: PropTypes.arrayOf(PropTypes.string)
+    highlightedBarIds: PropTypes.arrayOf(PropTypes.string),
+    onSortFinish: PropTypes.func
 };

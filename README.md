@@ -8,8 +8,16 @@
   - [x] insertion
 - [x] Setup basic UI controls
   - [x] Bug: functional component not updating props
-- [ ] How to pause?
+
+- [x] Different datasets
+- [ ] Give some descriptive text...
+
 - Redefine...
+- [ ] How to pause?
+- [ ] Add transition speed tweaker
+- [ ] How to implement `generateFewUniquesIntegers()`
+- [ ] Animation when axis changes
+
 
 ---
 
@@ -57,8 +65,21 @@ className={styles.btn}
 ],
 ...
 ```
+
+# Choice of Material Design Framework
+
 - MDC for React, google official release, [github repo page](https://github.com/material-components/material-components-web-react)
+  - Official but Lack of slider & radio implementation. No demo page. Seems like a start point for customization only and not for immediate use.
 - Recommended MDC for react, [Material UI](https://material-ui.com/)
+  - Popular but a bit out of date. Slider is in "Lab" experimental phase, and effect a bit simple.
+  - [Has radio](https://material-ui.com/demos/selection-controls/).
+- [React-md](https://react-md.mlaursen.com/components/sliders).
+  - Github repo is active.
+  - Has radio and slider, both in stable version. But effect a bit simple.
+- [React Toolbar](http://react-toolbox.io/#/components/button)
+  - Github is active
+  - Has slider, radio, rich visual effects!
+  - However, the theming and styling doesn't play well with create-react-app generated projects. [See this post](https://github.com/react-toolbox/react-toolbox/issues/1278)
 
 ---
 

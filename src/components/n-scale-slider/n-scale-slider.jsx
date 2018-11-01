@@ -14,12 +14,35 @@ export default class NScaleSlider extends Component {
     static propTypes = {
         // prop: PropTypes,
         onSlideChange: PropTypes.func,
+        onDatasetChange: PropTypes.func,
         scale: PropTypes.number,
+        disabled: PropTypes.bool,
+        datasetType: PropTypes.string
     }
 
     state = {
         value: `${this.props.scale}`,
+        datasetType: this.props.datasetType
     };
+
+    static scaleOptions = [
+        "10", "30", "80", "200"
+    ]
+
+    static datasetOptions = [
+        {
+            uid: `random`,
+            label: `Random`,
+        },
+        {
+            uid: `sorted`,
+            label: `Sorted`,
+        },
+        {
+            uid: `sorted-reverse`,
+            label: `Sorted Reverse`,
+        },
+    ]
 
     constructor(props) {
         super(props)
@@ -30,36 +53,55 @@ export default class NScaleSlider extends Component {
         let radioStringValue = $event.target.value;
         this.setState({
             value: radioStringValue
-        },() => {
-            this.props.onSlideChange(+radioStringValue) 
+        }, () => {
+            this.props.onSlideChange(+radioStringValue)
         });
     }
 
-
+    handleDatasetRadioChange = $event => {
+        let radioStringValue = $event.target.value;
+        this.setState({
+            datasetType: radioStringValue
+        }, () => {
+            this.props.onDatasetChange(radioStringValue)
+        });
+    }
 
 
     render() {
         return (
             <div className={styles.scaleControlContainer}>
                 <FormControl component="fieldset" >
-                    <FormLabel component="legend">Gender</FormLabel>
+                    <FormLabel component="legend">Scale (n)</FormLabel>
                     <RadioGroup
-                        aria-label="Gender"
-                        name="gender1"
+                        aria-label="scale-n"
+                        name="scalen"
                         value={this.state.value}
                         onChange={this.handleRadioChange}
                     >
-                        <FormControlLabel value="10" control={<Radio />} label="10" />
-                        <FormControlLabel value="40" control={<Radio />} label="40" />
-                        <FormControlLabel value="200" control={<Radio />} label="200" />
-                        <FormControlLabel
-                            value="disabled"
-                            disabled
-                            control={<Radio />}
-                            label="(Disabled option)"
-                        />
+                        {
+                            NScaleSlider.scaleOptions.map((option, i) => (
+                                <FormControlLabel key={i} disabled={this.props.disabled} value={option} control={<Radio />} label={option} />
+                            ))
+                        }
                     </RadioGroup>
                     <FormHelperText>Change a different scale n to see how the sorting time changes.</FormHelperText>
+                </FormControl>
+                <FormControl component="fieldset" >
+                    <FormLabel component="legend">Dataset Type</FormLabel>
+                    <RadioGroup
+                        aria-label="dataset-type"
+                        name="datasettype"
+                        value={this.state.datasetType}
+                        onChange={this.handleDatasetRadioChange}
+                    >
+                        {
+                            NScaleSlider.datasetOptions.map((option) => (
+                                <FormControlLabel key={option.uid} disabled={this.props.disabled} value={option.uid} control={<Radio />} label={option.label} />
+                            ))
+                        }
+                    </RadioGroup>
+                    <FormHelperText>Change a different data set to see how the performance changes for each sorting algorithm.</FormHelperText>
                 </FormControl>
             </div>
         )

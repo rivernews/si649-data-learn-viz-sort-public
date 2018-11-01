@@ -1,6 +1,6 @@
 import React, { Component, } from 'react';
 
-import * as RandomHelper from "./helpers/random";
+import * as DataGenerator from "./helpers/data-generator";
 
 import './App.scss';
 
@@ -14,18 +14,6 @@ function SortAnimation(props) {
     if (!Array.isArray(props.data) || props.data.length === 0)  {
         return <div></div> ;
     }
-
-    // let scale = props.data.length;
-    // let transitionDuration;
-    // if (scale < 30) {
-    //     transitionDuration = 300;
-    // } 
-    // else if (scale < 100) {
-    //     transitionDuration = 80;
-    // }
-    // else if (scale >= 100) {
-    //     transitionDuration = 5;
-    // }
 
     return <AnimatedSortBars
         data={props.data}
@@ -51,6 +39,7 @@ class App extends Component {
                 width: 500,
                 height: 250,
             },
+            datasetType: "random",
             bubbleSortData: [],
             selectionSortData: [],
             insertionSortData: [],
@@ -61,7 +50,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.setState(this.generateRamdomDataForAllSort(this.state.scale, this.state.range))
+        this.setState(this.generateNewDataForAllSort(this.state.range))
     }
     componentDidUpdate() {
     }
@@ -73,7 +62,7 @@ class App extends Component {
      */
 
     resetData = () => {
-        this.setState(this.generateRamdomDataForAllSort(this.state.scale, this.state.range))
+        this.setState(this.generateNewDataForAllSort(this.state.range))
     }
 
     onStartSortClick = () => {
@@ -103,12 +92,32 @@ class App extends Component {
 
     onNScaleSlideChange = $event => {
         let scale = $event;
-        let randomDataSets = this.generateRamdomDataForAllSort(scale, this.state.range);
         this.setState({
             scale,
-            bubbleSortData: randomDataSets.bubbleSortData,
-            selectionSortData: randomDataSets.selectionSortData,
-            insertionSortData: randomDataSets.insertionSortData
+        }, () => {
+            this.updateDataset(
+                this.generateNewDataForAllSort(this.state.range)
+            )
+        });
+        ;
+    }
+
+    onDatasetTypeChange = $event => {
+        let datasetType = $event;
+        this.setState({
+            datasetType,
+        }, () => {
+            this.updateDataset(
+                this.generateNewDataForAllSort(this.state.range)
+            );
+        });
+    }
+
+    updateDataset(newDataSets) {
+        this.setState({
+            bubbleSortData: newDataSets.bubbleSortData,
+            selectionSortData: newDataSets.selectionSortData,
+            insertionSortData: newDataSets.insertionSortData
         });
     }
 
@@ -264,13 +273,28 @@ class App extends Component {
         return new Promise(resolve => setTimeout(resolve, milliSecond));
     }
 
-    generateRamdomDataForAllSort(n, range) {
-        let data = RandomHelper.generateRandomIntegers(n, range);
+    generateNewDataForAllSort(range) {
+        let n = this.state.scale;
+        let data = []
+        if (this.state.datasetType === "random") {
+            data = DataGenerator.generateRandomIntegers(n, range);
+        }
+        else if (this.state.datasetType === "sorted") {
+            data = DataGenerator.generateSortedIntegers(n, range);
+        }
+        else if (this.state.datasetType === "sorted-reverse") {
+            data = DataGenerator.generateSortedReverseIntegers(n, range);
+        }
+
         return {
             bubbleSortData: data.slice(0),
             selectionSortData: data.slice(0),
             insertionSortData: data.slice(0),
         }
+    }
+
+    test() {
+        console.log("hehe", DataGenerator.generateSortedReverseIntegers(20, 30))
     }
 
     /**
@@ -337,25 +361,28 @@ class App extends Component {
                                 disabled={this.state.isSorting}
                                 onClick={this.onStartSortClick}>
                                 Start
-                        </Button>
+                            </Button>
                             <Button
                                 className="action-button"
                                 raised
                                 disabled={this.state.isSorting}
                                 onClick={this.resetData}>
                                 Reset
-                        </Button>
+                            </Button>
                             <Button
                                 className="action-button"
                                 raised
-                                onClick={() => console.log('clicked!')}>
-                                Click Me!
-                        </Button>
+                                onClick={this.test}>
+                                Test
+                            </Button>
                         </div>
                         <div className="scale-control">
                             <NScaleSlider
                                 onSlideChange={this.onNScaleSlideChange}
-                                scale={this.state.scale}>
+                                onDatasetChange={this.onDatasetTypeChange}
+                                scale={this.state.scale}
+                                datasetType={this.state.datasetType}
+                                disabled={this.state.isSorting}>
                             </NScaleSlider>
                         </div>
                     </div>

@@ -6,7 +6,8 @@
     - [x] Each dataset should have their own data copies. (But same initial dataset)
     - [x] Add a label for each sort chart
   - [x] insertion
-- [ ] Setup basic UI controls
+- [x] Setup basic UI controls
+  - [x] Bug: functional component not updating props
 - [ ] How to pause?
 - Redefine...
 
@@ -57,6 +58,7 @@ className={styles.btn}
 ...
 ```
 - MDC for React, google official release, [github repo page](https://github.com/material-components/material-components-web-react)
+- Recommended MDC for react, [Material UI](https://material-ui.com/)
 
 ---
 

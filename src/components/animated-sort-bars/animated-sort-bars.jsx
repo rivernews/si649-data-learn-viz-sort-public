@@ -21,21 +21,21 @@ export default class AnimatedSortBars extends Component {
         this.createBarChart()
     }
     componentDidUpdate() {
-        // this.createBarChart()
         this.updateBarChart()
     }
-    
-    createBarChart() {
-        this.dataMax = d3.max(this.props.data.map((d)=>d.value));
-        const { x, y } = this.setupInitialScale();
-        this.xScale = x;
-        this.yScale = y;
 
+    createBarChart() {
         this.updateBarChart();
     }
 
     updateBarChart() {
-        // inject data for updates
+        // get data
+        this.dataMax = d3.max(this.props.data.map((d) => d.value));
+        const { x, y } = this.setupInitialScale();
+        this.xScale = x;
+        this.yScale = y;
+
+        // inject data to dom for updates
         this.bars = d3.select(this.node)
             .selectAll('rect')
             .data(this.props.data, (d, i) => {
@@ -87,6 +87,10 @@ export default class AnimatedSortBars extends Component {
 
         // update existing
         this.bars
+            .attrs({
+                rx: this.xScale.bandwidth() * .5,
+                ry: this.xScale.bandwidth() * .5,
+            })
             .transition(t)
             .styles({
                 fill: (d, i) => {

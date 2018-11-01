@@ -5,31 +5,65 @@ import * as RandomHelper from "./helpers/random";
 import './App.scss';
 
 import AnimatedSortBars from "./components/animated-sort-bars/animated-sort-bars";
+import NScaleSlider from "./components/n-scale-slider/n-scale-slider";
 
 import Button from '@material/react-button/dist';
 import '@material/react-button/dist/button.css';
 
+function SortAnimation(props) {
+    if (!Array.isArray(props.data) || props.data.length === 0)  {
+        return <div></div> ;
+    }
+
+    // let scale = props.data.length;
+    // let transitionDuration;
+    // if (scale < 30) {
+    //     transitionDuration = 300;
+    // } 
+    // else if (scale < 100) {
+    //     transitionDuration = 80;
+    // }
+    // else if (scale >= 100) {
+    //     transitionDuration = 5;
+    // }
+
+    return <AnimatedSortBars
+        data={props.data}
+        svgSize={props.svgSize}
+        swapTransition={props.swapTransition}
+        highlightedBarIds={props.highlightedBarIds}
+    >
+    </AnimatedSortBars>
+}
+
 class App extends Component {
     swapTransition = 10
-    n = 104;
-    range = 240;
-    data = this.generateRandomData();
+    
+    data = [];
 
     constructor(props) {
         super(props);
         this.state = {
             isSorting: false,
-            bubbleSortData: this.data.slice(0),
-            selectionSortData: this.data.slice(0),
-            insertionSortData: this.data.slice(0),
+            scale: 10,  
+            range: 240,
             svgSize: {
                 width: 500,
                 height: 250,
             },
+            bubbleSortData: [],
+            selectionSortData: [],
+            insertionSortData: [],
             bubbleSortHighlightedBarIds: [],
             selectionSortHighlightedBarIds: [],
-            insertionSortHighlightedBarIds: []
+            insertionSortHighlightedBarIds: [],          
         };
+    }
+
+    componentDidMount() {
+        this.setState(this.generateRamdomDataForAllSort(this.state.scale, this.state.range))
+    }
+    componentDidUpdate() {
     }
 
     /**
@@ -39,12 +73,7 @@ class App extends Component {
      */
 
     resetData = () => {
-        this.data = this.generateRandomData()
-        this.setState((prevState) => ({
-            bubbleSortData: this.data.slice(0),
-            selectionSortData: this.data.slice(0),
-            insertionSortData: this.data.slice(0),
-        }))
+        this.setState(this.generateRamdomDataForAllSort(this.state.scale, this.state.range))
     }
 
     onStartSortClick = () => {
@@ -70,6 +99,17 @@ class App extends Component {
                 })
             )
             ;
+    }
+
+    onNScaleSlideChange = $event => {
+        let scale = $event;
+        let randomDataSets = this.generateRamdomDataForAllSort(scale, this.state.range);
+        this.setState({
+            scale,
+            bubbleSortData: randomDataSets.bubbleSortData,
+            selectionSortData: randomDataSets.selectionSortData,
+            insertionSortData: randomDataSets.insertionSortData
+        });
     }
 
     /**
@@ -145,7 +185,6 @@ class App extends Component {
                 }
             }
             if (!isSwapped) {
-                // console.log("short cut!")
                 break;
             }
         }
@@ -225,8 +264,13 @@ class App extends Component {
         return new Promise(resolve => setTimeout(resolve, milliSecond));
     }
 
-    generateRandomData() {
-        return RandomHelper.generateRandomIntegers(this.n, this.range);
+    generateRamdomDataForAllSort(n, range) {
+        let data = RandomHelper.generateRandomIntegers(n, range);
+        return {
+            bubbleSortData: data.slice(0),
+            selectionSortData: data.slice(0),
+            insertionSortData: data.slice(0),
+        }
     }
 
     /**
@@ -234,6 +278,8 @@ class App extends Component {
      * 
      * 
      */
+
+    
 
     render() {
         return (
@@ -245,13 +291,12 @@ class App extends Component {
                     <div className="sort-animation-container">
                         <div className="sort-animation">
                             <div className="visualization">
-                                <AnimatedSortBars
+                                <SortAnimation  
                                     data={this.state.bubbleSortData}
                                     svgSize={this.state.svgSize}
                                     swapTransition={this.swapTransition}
                                     highlightedBarIds={this.state.bubbleSortHighlightedBarIds}
-                                >
-                                </AnimatedSortBars>
+                                />
                             </div>
                             <div className="header">
                                 <span>Bubble Sort</span>
@@ -259,13 +304,12 @@ class App extends Component {
                         </div>
                         <div className="sort-animation">
                             <div className="visualization">
-                                <AnimatedSortBars
+                                <SortAnimation
                                     data={this.state.selectionSortData}
                                     svgSize={this.state.svgSize}
                                     swapTransition={this.swapTransition}
                                     highlightedBarIds={this.state.selectionSortHighlightedBarIds}
-                                >
-                                </AnimatedSortBars>
+                                />
                             </div>
                             <div className="header">
                                 <span>Selection Sort</span>
@@ -273,41 +317,48 @@ class App extends Component {
                         </div>
                         <div className="sort-animation">
                             <div className="visualization">
-                                <AnimatedSortBars
+                                <SortAnimation
                                     data={this.state.insertionSortData}
                                     svgSize={this.state.svgSize}
                                     swapTransition={this.swapTransition}
-                                    highlightedBarIds={this.state.insertionSortHighlightedBarIds}>
-                                </AnimatedSortBars>
+                                    highlightedBarIds={this.state.insertionSortHighlightedBarIds}
+                                />
                             </div>
                             <div className="header">
                                 <span>Insertion Sort</span>
                             </div>
                         </div>
                     </div>
-                    <div className="action-container" >
-                        <Button
-                            className="action-button"
-                            raised
-                            disabled={this.state.isSorting}
-                            onClick={this.onStartSortClick}>
-                            Start
+                    <div className="user-controls">
+                        <div className="action-container" >
+                            <Button
+                                className="action-button"
+                                raised
+                                disabled={this.state.isSorting}
+                                onClick={this.onStartSortClick}>
+                                Start
                         </Button>
-                        <Button
-                            className="action-button"
-                            raised
-                            disabled={this.state.isSorting}
-                            onClick={this.resetData}>
-                            Reset
+                            <Button
+                                className="action-button"
+                                raised
+                                disabled={this.state.isSorting}
+                                onClick={this.resetData}>
+                                Reset
                         </Button>
-                        <Button
-                            className="action-button"
-                            raised
-                            onClick={() => console.log('clicked!')}>
-                            Click Me!
+                            <Button
+                                className="action-button"
+                                raised
+                                onClick={() => console.log('clicked!')}>
+                                Click Me!
                         </Button>
+                        </div>
+                        <div className="scale-control">
+                            <NScaleSlider
+                                onSlideChange={this.onNScaleSlideChange}
+                                scale={this.state.scale}>
+                            </NScaleSlider>
+                        </div>
                     </div>
-
                 </div>
             </div>
         );

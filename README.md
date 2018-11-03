@@ -10,13 +10,18 @@
   - [x] Bug: functional component not updating props
 
 - [x] Different datasets
-- [ ] Give some descriptive text...
+- [x] Give some descriptive text...
+- [x] Polishing / Styling
+- [ ] Add transition speed tweaker
 
 - Redefine...
+- [ ] Project Report Writeup
+- [ ] Give a star graph
+- [ ] Try out `radar-chart-d3`
 - [ ] How to pause?
-- [ ] Add transition speed tweaker
 - [ ] How to implement `generateFewUniquesIntegers()`
 - [ ] Animation when axis changes
+
 
 
 ---
@@ -46,6 +51,8 @@ className={styles.btn}
 - Using arrow function as callback for onClick events in component class
 
 - Using `await` in for loop, [see this medium post](https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795)
+
+- Use [containment over inheritance](https://reactjs.org/docs/composition-vs-inheritance.html)
  
 ## Referece
 
@@ -80,6 +87,8 @@ className={styles.btn}
   - Github is active
   - Has slider, radio, rich visual effects!
   - However, the theming and styling doesn't play well with create-react-app generated projects. [See this post](https://github.com/react-toolbox/react-toolbox/issues/1278)
+
+- [Recommended by a Medium post](https://blog.prototypr.io/googles-official-material-design-components-can-be-wrapped-in-react-and-rendered-to-sketch-60ed40ef6020), the [rmwc](https://jamesmfriedman.github.io/rmwc/).
 
 ---
 

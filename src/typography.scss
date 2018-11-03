@@ -1,0 +1,11 @@
+@import "./variables.scss";
+@import "./layout.scss";
+
+body {
+    @extend .light-bg-text ;
+    font-family: 'Roboto', sans-serif;
+}
+
+.long-description-text {
+    line-height: 1.8rem;
+}

@@ -35,6 +35,9 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "gh-pages": "^2.0.1"
+    "gh-pages": "^2.0.1",
+    "radar-chart-d3": "^1.2.0",
+    "rmwc": "^3.0.9",
+    "typeface-roboto": "0.0.54"
   }
 }

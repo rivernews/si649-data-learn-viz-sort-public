@@ -6,13 +6,17 @@ import './App.scss';
 
 import AnimatedSortBars from "./components/animated-sort-bars/animated-sort-bars";
 import NScaleSlider from "./components/n-scale-slider/n-scale-slider";
+import PerformanceGraph from "./components/performance-graph/performance-graph";
 
 import Button from '@material/react-button/dist';
 import '@material/react-button/dist/button.css';
+import * as d3Scales from 'd3-scale';
+import { Slider } from "@rmwc/slider";
+import '@material/slider/dist/mdc.slider.css';
 
 function SortAnimation(props) {
-    if (!Array.isArray(props.data) || props.data.length === 0)  {
-        return <div></div> ;
+    if (!Array.isArray(props.data) || props.data.length === 0) {
+        return <div></div>;
     }
 
     return <AnimatedSortBars
@@ -25,28 +29,38 @@ function SortAnimation(props) {
 }
 
 class App extends Component {
-    swapTransition = 10
-    
-    data = [];
+    transitionDurationRange = [10, 1000];
 
     constructor(props) {
         super(props);
+
         this.state = {
             isSorting: false,
-            scale: 10,  
+            scale: 10,
             range: 240,
             svgSize: {
                 width: 500,
                 height: 250,
             },
+            // performanceSvgSize: {
+            //     width: 500,
+            //     height: 500,
+            // },
+            transitionDuration: 200,
+            transitionDurationSliderValue: 200,
             datasetType: "random",
             bubbleSortData: [],
             selectionSortData: [],
             insertionSortData: [],
             bubbleSortHighlightedBarIds: [],
             selectionSortHighlightedBarIds: [],
-            insertionSortHighlightedBarIds: [],          
+            insertionSortHighlightedBarIds: [],
         };
+
+        this.transitionDurationSliderScale = d3Scales.scalePow()
+            .exponent(4)
+            .domain([0, 100])
+            .range(this.transitionDurationRange);
     }
 
     componentDidMount() {
@@ -121,6 +135,14 @@ class App extends Component {
         });
     }
 
+    onTransitionDurationSliderValueChange = ($event) => {
+        let transitionDurationSliderValue = this.transitionDurationSliderScale($event.detail.value);
+        this.setState({
+            transitionDurationSliderValue,
+            transitionDuration: transitionDurationSliderValue
+        });
+    }
+
     /**
      * Core Sort ALgorithms
      * 
@@ -134,9 +156,11 @@ class App extends Component {
         for (let i = 1; i < n; i++) {
             let sortingTargetIndex = i;
             let insertIndex = i - 1;
+
+            await this.markBarsByIndexes([sortingTargetIndex, insertIndex], "insertion")
             while (insertIndex >= 0 && dataRef[insertIndex].value > dataRef[sortingTargetIndex].value) {
-                await this.markBarsByIndexes([i, insertIndex], "insertion")
-                await this.asyncWait(this.swapTransition * 2);
+                await this.markBarsByIndexes([sortingTargetIndex, insertIndex], "insertion")
+                await this.asyncWait(this.state.transitionDuration * 2);
                 insertIndex--;
             }
             insertIndex++;
@@ -149,7 +173,8 @@ class App extends Component {
                     return state
                 }
             })
-            await this.asyncWait(this.swapTransition * 2);
+            await this.markBarsByIndexes(DataGenerator.generateRangeInt(insertIndex, sortingTargetIndex, true), "insertion")
+            await this.asyncWait(this.state.transitionDuration * 2);
         }
 
         await this.clearMarkedBars("insertion");
@@ -164,14 +189,14 @@ class App extends Component {
             let minIndex = i;
             for (let j = i + 1; j < n; j++) {
                 await this.markBarsByIndexes([j, minIndex], "selection")
-                await this.asyncWait(this.swapTransition * 2);
+                await this.asyncWait(this.state.transitionDuration * 2);
                 if (dataRef[j].value < dataRef[minIndex].value) {
                     minIndex = j;
                 }
             }
             await this.markBarsByIndexes([i, minIndex], "selection");
             await this.swap(i, minIndex, "selection");
-            await this.asyncWait(this.swapTransition * 2);
+            await this.asyncWait(this.state.transitionDuration * 2);
         }
 
         await this.clearMarkedBars("selection");
@@ -186,11 +211,11 @@ class App extends Component {
             let isSwapped = false;
             for (let j = 0; j < n - 1 - i; j++) {
                 await this.markBarsByIndexes([j, j + 1], "bubble")
-                await this.asyncWait(this.swapTransition * 2);
+                await this.asyncWait(this.state.transitionDuration * 2);
                 if (dataRef[j].value > dataRef[j + 1].value) {
                     await this.swap(j, j + 1, "bubble");
                     isSwapped = true;
-                    await this.asyncWait(this.swapTransition * 2);
+                    await this.asyncWait(this.state.transitionDuration * 2);
                 }
             }
             if (!isSwapped) {
@@ -293,68 +318,36 @@ class App extends Component {
         }
     }
 
-    test() {
-        console.log("hehe", DataGenerator.generateSortedReverseIntegers(20, 30))
-    }
-
     /**
      * Template
      * 
      * 
      */
 
-    
+
 
     render() {
         return (
             <div className="App">
-                <header className="App-header">
-                    <h2>Basic Sort Algorithms Viz</h2>
-                </header>
-                <div className="App-content">
-                    <div className="sort-animation-container">
-                        <div className="sort-animation">
-                            <div className="visualization">
-                                <SortAnimation  
-                                    data={this.state.bubbleSortData}
-                                    svgSize={this.state.svgSize}
-                                    swapTransition={this.swapTransition}
-                                    highlightedBarIds={this.state.bubbleSortHighlightedBarIds}
-                                />
-                            </div>
-                            <div className="header">
-                                <span>Bubble Sort</span>
-                            </div>
-                        </div>
-                        <div className="sort-animation">
-                            <div className="visualization">
-                                <SortAnimation
-                                    data={this.state.selectionSortData}
-                                    svgSize={this.state.svgSize}
-                                    swapTransition={this.swapTransition}
-                                    highlightedBarIds={this.state.selectionSortHighlightedBarIds}
-                                />
-                            </div>
-                            <div className="header">
-                                <span>Selection Sort</span>
-                            </div>
-                        </div>
-                        <div className="sort-animation">
-                            <div className="visualization">
-                                <SortAnimation
-                                    data={this.state.insertionSortData}
-                                    svgSize={this.state.svgSize}
-                                    swapTransition={this.swapTransition}
-                                    highlightedBarIds={this.state.insertionSortHighlightedBarIds}
-                                />
-                            </div>
-                            <div className="header">
-                                <span>Insertion Sort</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="user-controls">
-                        <div className="action-container" >
+                <div className="mainPage">
+                    <header className="App-header pageStandardContent">
+                        <h2 className="headline-text" >Basic Sort Algorithms Viz</h2>
+                        <h2>Part One: A Quick Look</h2>
+                        <p className="long-description-text">
+                            Do you know how differnt sorting algorithms "look like" under the hood?
+                            Do you know why Bubble Sort is called bubble sort?
+
+                            Press the "start" button to trigger the sort and oberve the changes in real-time. 
+                    </p>
+                    <p className="long-description-text">
+                        Comparison operation is the dominant factor of sort performance. 
+                        Pink-marked bars indicate where a comparison or a costy operation occurred between two numbers.
+                        
+                        Particularly, observe how the bars move,
+                        and how each sort algorithm progress toward their final results.
+                    </p>
+                    <div className="action-container" >
+                        <div className="start-actions">
                             <Button
                                 className="action-button"
                                 raised
@@ -369,13 +362,67 @@ class App extends Component {
                                 onClick={this.resetData}>
                                 Reset
                             </Button>
-                            <Button
-                                className="action-button"
-                                raised
-                                onClick={this.test}>
-                                Test
-                            </Button>
                         </div>
+                        <div className="transition-speed-actions">
+                            <p>
+                                Slider Speed: {this.state.transitionDuration.toFixed(2)} ms / per comparison
+                            </p>
+                            <Slider
+                                theme="primary primaryBg"
+                                onChange={this.onTransitionDurationSliderValueChange }
+                            />
+                        </div>
+                    </div>
+                    </header>
+                    <div className="App-content">
+                        <div className="sort-animation-container">
+                            <header>
+                            </header>
+                            <div className="sort-animation">
+                                <div className="visualization">
+                                    <SortAnimation
+                                        data={this.state.bubbleSortData}
+                                        svgSize={this.state.svgSize}
+                                        swapTransition={this.state.transitionDuration}
+                                        highlightedBarIds={this.state.bubbleSortHighlightedBarIds}
+                                    />
+                                </div>
+                                <div className="header center-text">
+                                    <span>Bubble Sort</span>
+                                </div>
+                            </div>
+                            <div className="sort-animation">
+                                <div className="visualization">
+                                    <SortAnimation
+                                        data={this.state.selectionSortData}
+                                        svgSize={this.state.svgSize}
+                                        swapTransition={this.state.transitionDuration}
+                                        highlightedBarIds={this.state.selectionSortHighlightedBarIds}
+                                    />
+                                </div>
+                                <div className="header center-text">
+                                    <span>Selection Sort</span>
+                                </div>
+                            </div>
+                            <div className="sort-animation">
+                                <div className="visualization">
+                                    <SortAnimation
+                                        data={this.state.insertionSortData}
+                                        svgSize={this.state.svgSize}
+                                        swapTransition={this.state.transitionDuration}
+                                        highlightedBarIds={this.state.insertionSortHighlightedBarIds}
+                                    />
+                                </div>
+                                <div className="header center-text">
+                                    <span>Insertion Sort</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="secondaryPage">
+                    <div className="user-controls pageStandardContent">
+                        
                         <div className="scale-control">
                             <NScaleSlider
                                 onSlideChange={this.onNScaleSlideChange}
@@ -387,6 +434,21 @@ class App extends Component {
                         </div>
                     </div>
                 </div>
+                {/* <div className="thridPage pageStandardContent">
+                    <h2>Part Three: Performance </h2>
+                    <div className="performance-graph-container" >
+                        {
+                            this.state.svgSize &&
+                            (<PerformanceGraph
+                                data={[]}
+                                svgSize={this.state.performanceSvgSize}
+                                transitionDuration={this.props.swapTransition}
+                                highlightedBarIds={this.props.highlightedBarIds}
+                            />)
+                        }
+
+                    </div>
+                </div> */}
             </div>
         );
     }

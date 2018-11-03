@@ -1,0 +1,24 @@
+.controlsContainer {
+    display: flex;
+    flex-direction: column;
+
+    .content {
+        .controlContainer {
+            display: flex;
+            flex-direction: column;
+
+            .section-content {
+                display: flex;
+                & > * {
+                    flex: 1;
+
+                    &:not(:last-child) {
+                        padding-right: 50px;
+                    }
+                }
+            }
+
+            margin-bottom: 80px;
+        }
+    }
+}

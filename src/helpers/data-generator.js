@@ -9,7 +9,7 @@ export function generateRandomIntegers(size = 10, range = 10) {
     for (let i = 0; i < size; i++) {
         data.push({
             id: `id-${i}`,
-            value: rangeInt(Math.ceil(range * .1), range),
+            value: rangeInt(Math.ceil(range * .15), range),
         })
     }
 
@@ -38,4 +38,13 @@ export function generateSortedReverseIntegers(size = 10, range = 10) {
 
 export function generateFewUniquesIntegers(size = 10, range = 10) {
     
+}
+
+export function generateRangeInt(start, end, isIncludingBothBoundaries = false) {
+    let data = [];
+    let last = (isIncludingBothBoundaries) ? end + 1: end;
+    for (let i = start; i < last; i++) {
+        data.push(i)
+    }
+    return data;
 }

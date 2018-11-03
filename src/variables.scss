@@ -1,0 +1,26 @@
+/** 
+
+Color
+
+*/
+
+$primary-color: #7000f8;
+$primary-color-light-bg: #dfcff3;
+$primary-color-dark-bg: #1f0046;
+
+$secondary-color: #F80088;
+$secondary-color-light-bg: rgb(255, 231, 244);
+$secondary-color-dark-bg: rgb(37, 0, 21);
+
+.dark-bg {
+    background-color: $primary-color-dark-bg;
+}
+.light-bg {
+    background-color: $primary-color-light-bg;
+}
+.dark-bg-text {
+    color: $primary-color-light-bg;
+}
+.App .light-bg-text {
+    color: $primary-color-dark-bg;
+}

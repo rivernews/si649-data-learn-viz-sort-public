@@ -1,67 +1,84 @@
+@import "./variables.scss";
+@import "./layout.scss";
+@import "./typography.scss";
+
 .App {
-  text-align: center;
+    background-color: $primary-color-light-bg;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 30vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-content {
+.mainPage {
     display: flex;
     justify-content: center;
 
-    .sort-animation-container {
-        margin: 20px;
+    height: 100vh;
+
+    .App-header {
+        flex: 1;
 
         display: flex;
         flex-direction: column;
-        .sort-animation {
+        justify-content: center;
+        align-items: start;
+    
+        @extend .light-bg-text ;
+    
+        .headline-text {
+            font-size: calc(10px + 3vmin);
+        }
+    
+        .action-container {
+            .start-actions {
+                .action-button  {
+                    border-radius: 20px;
+                    margin: 5px;
+                }
+            }
+            
+        }
+    }
+    
+    .App-content {
+        flex: 2;
+
+        display: flex;
+        justify-content: center;
+    
+        background-color: white;
+        border-radius: 0 0 0 120px;
+    
+        .sort-animation-container {
+            margin: 20px;
+    
             display: flex;
             flex-direction: column;
 
-            .header {
-
-            }
-            .visualization {
-
-            }
-
-            &:not(:last-child) {
-                margin-bottom: 30px;
+            .sort-animation {
+                display: flex;
+                flex-direction: column;
+    
+                .header {
+    
+                }
+                .visualization {
+    
+                }
+    
+                &:not(:last-child) {
+                    margin-bottom: 30px;
+                }
             }
         }
     }
+}
 
+.secondaryPage {
     .user-controls {
-        margin: 20px;
-        
-        display: flex;
-        flex-direction: column;
-
-        .action-container {
-            .action-button  {
-                border-radius: 20px;
-            }
-        }
-        
         .scale-control {
 
         }
     }
-
-    
 }
 
-
+.pageStandardContent {
+    padding: 5vmin 10vmin;
+}

@@ -1,0 +1,13 @@
+@import "../../variables.scss";
+
+.numberBar {
+    fill: $primary-color;
+}
+
+.markedNumberBar {
+    fill: $secondary-color;
+}
+
+.markedNumberBar, .numberBar {
+    transition: fill .1s;
+}

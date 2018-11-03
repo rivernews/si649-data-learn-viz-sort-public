@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
 // import '../../App.scss'
-import './animated-sort-bars.module.scss'
+import './animated-sort-bars.scss'
 
 import * as d3 from 'd3';
 import "d3-selection-multi";
@@ -50,9 +50,9 @@ export default class AnimatedSortBars extends Component {
         this.bars.enter().append('rect')
             .styles({
                 opacity: 0,
-                fill: "orange"
             })
             .attrs({
+                class: "numberBar",
                 rx: this.xScale.bandwidth() * .5,
                 ry: this.xScale.bandwidth() * .5,
                 x: (d, i) => this.xScale(i),
@@ -63,6 +63,7 @@ export default class AnimatedSortBars extends Component {
             .transition(t)
             .styles({
                 opacity: 1,
+                transition: `fill ${t/1000.0}s`
             })
             .attrs({
                 y: (d, i) => {
@@ -92,10 +93,10 @@ export default class AnimatedSortBars extends Component {
                 ry: this.xScale.bandwidth() * .5,
             })
             .transition(t)
-            .styles({
-                fill: (d, i) => {
+            .attrs({
+                class: (d, i) => {
                     let found = this.props.highlightedBarIds.find((id) => d.id === id);
-                    return (found === undefined) ? "orange" : "blue";
+                    return (found === undefined) ? "numberBar" : "markedNumberBar";
                 }
             })
             .attr('x', (d, i) => this.xScale(i))
@@ -145,5 +146,4 @@ AnimatedSortBars.propTypes = {
     data: PropTypes.array,
     swapTransition: PropTypes.number,
     highlightedBarIds: PropTypes.arrayOf(PropTypes.string),
-    onSortFinish: PropTypes.func
 };

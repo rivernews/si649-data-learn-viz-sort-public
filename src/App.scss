@@ -33,7 +33,19 @@
                     margin: 5px;
                 }
             }
-            
+
+            .transition-speed-actions {
+                .mdc-slider__track-container {
+                    background-color: transparentize($color: $primary-color, $amount: 0.74);
+                    .mdc-slider__track {
+                        background-color: $primary-color;
+                    }
+                }
+                .mdc-slider__thumb-container svg.mdc-slider__thumb {
+                    stroke: $primary-color;
+                    fill: $primary-color;
+                }
+            }
         }
     }
     

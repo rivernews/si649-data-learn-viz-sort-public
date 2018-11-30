@@ -337,7 +337,7 @@ class App extends Component {
                             Do you know how differnt sorting algorithms "look like" under the hood?
                             Do you know why Bubble Sort is called bubble sort?
 
-                            Press the "start" button to trigger the sort and oberve the changes in real-time. 
+                            Press the "start" button to trigger the sort and observe the changes in real-time. 
                     </p>
                     <p className="long-description-text">
                         Comparison operation is the dominant factor of sort performance. 

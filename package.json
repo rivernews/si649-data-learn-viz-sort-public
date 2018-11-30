@@ -1,8 +1,8 @@
 {
-  "name": "si649-data-learn-viz-sort",
+  "name": "si649-data-learn-viz-sort-public",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://rivernews.github.io/si649-data-learn-viz-sort",
+  "homepage": "https://rivernews.github.io/si649-data-learn-viz-sort-public",
   "dependencies": {
     "@material-ui/core": "^3.3.2",
     "@material/react-button": "^0.6.1",

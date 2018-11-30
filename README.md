@@ -12,10 +12,10 @@
 - [x] Different datasets
 - [x] Give some descriptive text...
 - [x] Polishing / Styling
-- [ ] Add transition speed tweaker
+- [x] Add transition speed tweaker
 
 - Redefine...
-- [ ] Project Report Writeup
+- [x] Project Report Writeup
 - [ ] Give a star graph
 - [ ] Try out `radar-chart-d3`
 - [ ] How to pause?

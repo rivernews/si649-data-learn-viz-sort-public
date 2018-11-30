@@ -79,7 +79,7 @@ export default class NScaleSlider extends Component {
                         <div className="section-content">
                             <header>
                                 <p className="long-description-text">
-                                    You might already know the worst case of these three sort algorithms are all the same - O(n).
+                                    You might already know the worst case of these three sort algorithms are all the same - O(n^2).
                                     However, as you may notice in your observation, their performance still slightly differs,
                                     and obviously there's one algorithm that's doing better than others.
                                     How about in the long term? Change a different size of scale (n) and find it out!

@@ -46,8 +46,8 @@ class App extends Component {
             //     width: 500,
             //     height: 500,
             // },
-            transitionDuration: 200,
-            transitionDurationSliderValue: 200,
+            transitionDuration: 10,
+            transitionDurationSliderValue: 10,
             datasetType: "random",
             bubbleSortData: [],
             selectionSortData: [],
@@ -365,7 +365,10 @@ class App extends Component {
                         </div>
                         <div className="transition-speed-actions">
                             <p>
-                                Slider Speed: {this.state.transitionDuration.toFixed(2)} ms / per comparison
+                                Animation Speed (10-1000ms):&nbsp;
+                                <strong>
+                                    {this.state.transitionDuration.toFixed(2)} ms / per comparison
+                                </strong>
                             </p>
                             <Slider
                                 theme="primary primaryBg"
